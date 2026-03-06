@@ -3,61 +3,44 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { StatsGrid } from "@/components/ui/StatsGrid";
-import { SectionLabel } from "@/components/ui/SectionLabel";
 import { Badge } from "@/components/ui/Badge";
-import { CopyButton } from "@/components/ui/CopyButton";
-import { AddressLink } from "@/components/shared/AddressLink";
 import { StatsSkeleton } from "@/components/ui/Skeleton";
 import type { StatItem } from "@/lib/types";
 
 interface MinerData {
-  port: number;
   node_id: string;
-  version: string;
-  uptime_ms: number;
+  name: string;
+  is_online: boolean;
+  trading_mode: string;
+  last_heartbeat: number;
   mining: {
-    blocks_mined: number;
-    hash_rate: number;
-    difficulty: number;
     is_mining: boolean;
-    last_block: string;
-    mempool_size: number;
-    miner_address: string;
-  } | null;
-  peers: { connected: number; known: number };
-  headers: {
-    chain_tip: number;
-    highest_height: number;
-    is_syncing: boolean;
-    total_headers: number;
-  } | null;
-  tokens: { known: number } | null;
-  portfolio: {
-    total_value: number;
-    total_spent: number;
-    total_revenue: number;
-    total_pnl: number;
-  } | null;
+    hash_rate: number;
+    blocks_mined: number;
+  };
 }
 
 interface MinersResponse {
   miners: MinerData[];
   aggregate: {
     total_miners: number;
+    active_miners: number;
+    total_events: number;
     total_blocks_mined: number;
     total_hash_rate: number;
-    active_miners: number;
   };
 }
 
-function formatUptime(ms: number): string {
-  const hours = Math.floor(ms / 3600000);
-  const mins = Math.floor((ms % 3600000) / 60000);
-  if (hours > 24) {
-    const days = Math.floor(hours / 24);
-    return `${days}d ${hours % 24}h`;
-  }
-  return `${hours}h ${mins}m`;
+function formatTimeAgo(ts: number): string {
+  if (!ts) return "never";
+  const diff = Date.now() - ts;
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ${mins % 60}m ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
 }
 
 export default function MinersPage() {
@@ -70,7 +53,7 @@ export default function MinersPage() {
         const json = await res.json();
         setData(json);
       } catch {
-        setData({ miners: [], aggregate: { total_miners: 0, total_blocks_mined: 0, total_hash_rate: 0, active_miners: 0 } });
+        setData({ miners: [], aggregate: { total_miners: 0, total_blocks_mined: 0, total_hash_rate: 0, active_miners: 0, total_events: 0 } });
       }
     }
     load();
@@ -82,10 +65,10 @@ export default function MinersPage() {
 
   const stats: StatItem[] = agg
     ? [
-        { label: "Miners Found", value: agg.total_miners, status: agg.total_miners > 0 ? "green" : undefined },
-        { label: "Active Mining", value: agg.active_miners, status: agg.active_miners > 0 ? "green" : "amber" },
-        { label: "Total Hash Rate", value: `${agg.total_hash_rate.toFixed(1)} H/s` },
-        { label: "Total Blocks Mined", value: agg.total_blocks_mined },
+        { label: "Total Nodes", value: agg.total_miners, status: agg.total_miners > 0 ? "green" : undefined },
+        { label: "Online", value: agg.active_miners, status: agg.active_miners > 0 ? "green" : "amber" },
+        { label: "Total Events", value: agg.total_events },
+        { label: "Blocks Mined", value: agg.total_blocks_mined },
       ]
     : [];
 
@@ -96,7 +79,7 @@ export default function MinersPage() {
           CLAWMINER NODES
         </h1>
         <p className="text-zinc-500 text-sm font-mono">
-          Local ClawMiner instances — scanning ports 8402-8410
+          Registered ClawMiner agents on the PATH402 network
         </p>
       </div>
 
@@ -104,9 +87,9 @@ export default function MinersPage() {
 
       {data && data.miners.length === 0 && (
         <div className="border border-zinc-800 bg-zinc-950 p-8 text-center">
-          <div className="text-zinc-500 mb-2">No ClawMiner instances detected</div>
+          <div className="text-zinc-500 mb-2">No ClawMiner nodes registered</div>
           <div className="text-[10px] text-zinc-600 font-mono">
-            Scanning 127.0.0.1 ports 8402-8410 — ensure clawminerd is running
+            Nodes register via the ClawMiner pool API
           </div>
         </div>
       )}
@@ -114,7 +97,7 @@ export default function MinersPage() {
       <div className="space-y-4">
         {data?.miners.map((miner, i) => (
           <motion.div
-            key={miner.node_id + miner.port}
+            key={miner.node_id}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
@@ -123,104 +106,40 @@ export default function MinersPage() {
             {/* Node Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800/50">
               <div className="flex items-center gap-3">
-                <div className={`w-2 h-2 ${miner.mining?.is_mining ? "bg-green-500 animate-pulse-glow" : "bg-amber-500"}`} />
+                <div className={`w-2 h-2 ${miner.is_online ? "bg-green-500 animate-pulse-glow" : "bg-zinc-600"}`} />
                 <span className="font-[family-name:var(--font-display)] font-bold text-sm">
-                  NODE {miner.node_id.slice(0, 8)}
+                  {miner.name || `NODE ${miner.node_id.slice(0, 8)}`}
                 </span>
-                <Badge variant={miner.mining?.is_mining ? "green" : "amber"}>
-                  {miner.mining?.is_mining ? "Mining" : "Idle"}
+                <Badge variant={miner.is_online ? "green" : "amber"}>
+                  {miner.is_online ? "Online" : "Offline"}
                 </Badge>
-                <span className="text-[10px] text-zinc-600 font-mono">
-                  v{miner.version}
-                </span>
+                {miner.trading_mode && miner.trading_mode !== "paused" && (
+                  <Badge variant="green">{miner.trading_mode}</Badge>
+                )}
               </div>
               <div className="text-[10px] text-zinc-600 font-mono">
-                :{miner.port} — up {formatUptime(miner.uptime_ms)}
+                last seen {formatTimeAgo(miner.last_heartbeat)}
               </div>
             </div>
 
-            {/* Mining Stats */}
-            {miner.mining && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-zinc-800/30">
-                <div className="bg-zinc-950 px-6 py-4">
-                  <div className="text-[9px] uppercase tracking-[0.15em] text-zinc-600 mb-1">
-                    Hash Rate
-                  </div>
-                  <div className="font-[family-name:var(--font-display)] font-black text-lg tracking-tight">
-                    {miner.mining.hash_rate.toFixed(1)}
-                    <span className="text-zinc-500 text-xs ml-1">H/s</span>
-                  </div>
-                </div>
-                <div className="bg-zinc-950 px-6 py-4">
-                  <div className="text-[9px] uppercase tracking-[0.15em] text-zinc-600 mb-1">
-                    Blocks Mined
-                  </div>
-                  <div className="font-[family-name:var(--font-display)] font-black text-lg tracking-tight">
-                    {miner.mining.blocks_mined}
-                  </div>
-                </div>
-                <div className="bg-zinc-950 px-6 py-4">
-                  <div className="text-[9px] uppercase tracking-[0.15em] text-zinc-600 mb-1">
-                    Difficulty
-                  </div>
-                  <div className="font-[family-name:var(--font-display)] font-black text-lg tracking-tight">
-                    {miner.mining.difficulty}
-                  </div>
-                </div>
-                <div className="bg-zinc-950 px-6 py-4">
-                  <div className="text-[9px] uppercase tracking-[0.15em] text-zinc-600 mb-1">
-                    Mempool
-                  </div>
-                  <div className="font-[family-name:var(--font-display)] font-black text-lg tracking-tight">
-                    {miner.mining.mempool_size}
-                    <span className="text-zinc-500 text-xs ml-1">items</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Details Row */}
             <div className="px-6 py-4 flex flex-wrap gap-6 text-sm">
-              {miner.mining?.miner_address && (
-                <div>
-                  <span className="text-[9px] uppercase tracking-[0.15em] text-zinc-600 mr-2">
-                    Miner Address
-                  </span>
-                  <AddressLink address={miner.mining.miner_address} />
-                </div>
-              )}
-              {miner.mining?.last_block && (
-                <div>
-                  <span className="text-[9px] uppercase tracking-[0.15em] text-zinc-600 mr-2">
-                    Last Block
-                  </span>
-                  <span className="font-mono text-zinc-400">
-                    {miner.mining.last_block}
-                  </span>
-                  <CopyButton text={miner.mining.last_block} />
-                </div>
-              )}
               <div>
                 <span className="text-[9px] uppercase tracking-[0.15em] text-zinc-600 mr-2">
-                  Peers
+                  Node ID
                 </span>
                 <span className="font-mono text-zinc-400">
-                  {miner.peers.connected} connected
+                  {miner.node_id}
                 </span>
               </div>
-              {miner.headers && (
-                <div>
-                  <span className="text-[9px] uppercase tracking-[0.15em] text-zinc-600 mr-2">
-                    Headers
-                  </span>
-                  <span className="font-mono text-zinc-400">
-                    {miner.headers.highest_height.toLocaleString()} / {miner.headers.chain_tip.toLocaleString()}
-                  </span>
-                  {miner.headers.is_syncing && (
-                    <Badge variant="amber">Syncing</Badge>
-                  )}
-                </div>
-              )}
+              <div>
+                <span className="text-[9px] uppercase tracking-[0.15em] text-zinc-600 mr-2">
+                  Status
+                </span>
+                <span className="font-mono text-zinc-400">
+                  {miner.mining?.is_mining ? "Mining" : "Idle"}
+                </span>
+              </div>
             </div>
           </motion.div>
         ))}
