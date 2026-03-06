@@ -24,6 +24,7 @@ export const NAV_ITEMS = [
   { label: "Content Tokens", href: "/content-tokens" },
   { label: "Staking", href: "/staking" },
   { label: "Revenue", href: "/revenue" },
+  { label: "Token Tree", href: "/token-tree" },
   { label: "Nodes", href: "/miners" },
   { label: "Transactions", href: "/transactions" },
 ] as const;
