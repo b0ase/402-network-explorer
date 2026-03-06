@@ -98,5 +98,69 @@ export interface StatItem {
   label: string;
   value: string | number;
   change?: string;
-  status?: "green" | "amber" | "blue";
+  status?: "green" | "amber" | "blue" | "purple";
+}
+
+export interface ContentToken {
+  id: string;
+  ticker: string;
+  name: string;
+  issuer: string;
+  supply: number;
+  maxSupply: number;
+  holders: number;
+  pricingModel: "fixed" | "bonding_curve" | "alice_bond" | "free";
+  price: number;
+  protocol: string;
+  createdAt: number;
+  staked: number;
+  dividendYield: number;
+}
+
+export interface StakeEntry {
+  address: string;
+  tokenId: string;
+  ticker: string;
+  amount: number;
+  percentage: number;
+  since: number;
+  pendingDividends: number;
+}
+
+export interface RevenueStats {
+  totalRevenue: number;
+  totalDistributed: number;
+  totalPending: number;
+  operatorFees: number;
+  deposits: RevenueDeposit[];
+  distributions: RevenueDistribution[];
+}
+
+export interface RevenueDeposit {
+  txid: string;
+  amount: number;
+  tokenId: string;
+  ticker: string;
+  timestamp: number;
+}
+
+export interface RevenueDistribution {
+  txid: string;
+  amount: number;
+  tokenId: string;
+  ticker: string;
+  recipients: number;
+  timestamp: number;
+}
+
+export interface NetworkOverview {
+  powSupply: number;
+  powMaxSupply: number;
+  powPercentMined: number;
+  powHolders: number;
+  contentTokens: number;
+  totalStaked: number;
+  totalRevenue: number;
+  activeNodes: number;
+  totalTransactions: number;
 }

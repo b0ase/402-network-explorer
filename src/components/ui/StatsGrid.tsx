@@ -3,12 +3,13 @@
 import { motion } from "framer-motion";
 import type { StatItem } from "@/lib/types";
 
-function StatusDot({ status }: { status?: "green" | "amber" | "blue" }) {
+function StatusDot({ status }: { status?: "green" | "amber" | "blue" | "purple" }) {
   if (!status) return null;
-  const colors = {
+  const colors: Record<string, string> = {
     green: "bg-green-500",
     amber: "bg-amber-500",
     blue: "bg-blue-400",
+    purple: "bg-purple-400",
   };
   return (
     <span
@@ -19,7 +20,7 @@ function StatusDot({ status }: { status?: "green" | "amber" | "blue" }) {
 
 export function StatsGrid({ items }: { items: StatItem[] }) {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-800">
+    <div className={`grid grid-cols-2 ${items.length > 4 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-px bg-zinc-800`}>
       {items.map((item, i) => (
         <motion.div
           key={item.label}

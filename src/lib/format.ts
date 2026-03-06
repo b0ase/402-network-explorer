@@ -47,6 +47,25 @@ export function formatTimeAgo(ts: number): string {
   return `${Math.floor(seconds / 86400)}d ago`;
 }
 
+export function formatBSV(sats: number): string {
+  const bsv = sats / 100_000_000;
+  return `${bsv.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 8 })} BSV`;
+}
+
+export function formatBPS(bps: number): string {
+  return `${(bps / 100).toFixed(2)}%`;
+}
+
+export function formatPricingModel(model: string): string {
+  const labels: Record<string, string> = {
+    fixed: "Fixed Price",
+    bonding_curve: "Bonding Curve",
+    alice_bond: "Alice Bond",
+    free: "Free Mint",
+  };
+  return labels[model] || model;
+}
+
 export function detectSearchType(query: string): "tx" | "address" | "token" | null {
   const trimmed = query.trim();
   if (/^[a-fA-F0-9]{64}$/.test(trimmed)) return "tx";

@@ -23,8 +23,8 @@ const orbitron = Orbitron({
 export const metadata: Metadata = {
   title: "PATH402 Network Explorer",
   description:
-    "Block explorer for the PATH402 network — BSV-21 PoW20 token ($402), 21M supply, mined via Proof of Indexing",
-  keywords: ["PATH402", "$402", "BSV", "Bitcoin SV", "PoW20", "BSV-21", "block explorer", "Proof of Indexing"],
+    "Network dashboard for the PATH402 protocol stack — $401 Identity, $402 Content & Payment (PoW20), $403 Access Control. Mining, staking, revenue & content tokens.",
+  keywords: ["PATH402", "$401", "$402", "$403", "BSV", "Bitcoin SV", "PoW20", "BSV-21", "network dashboard", "Proof of Indexing", "content tokens", "staking"],
   openGraph: {
     title: "PATH402 Network Explorer",
     description: "Block explorer for the PATH402 network",

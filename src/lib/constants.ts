@@ -13,15 +13,17 @@ export const TOKEN = {
 
 export const API = {
   path402: "https://path402.com/api",
+  pool: "http://135.181.103.181:3402/api/v1",
   gorillaPool: "https://ordinals.gorillapool.io/api",
   whatsOnChain: "https://api.whatsonchain.com/v1/bsv/main",
 } as const;
 
 export const NAV_ITEMS = [
   { label: "Dashboard", href: "/" },
-  { label: "Miners", href: "/miners" },
-  { label: "Holders", href: "/holders" },
+  { label: "$402 Mining", href: "/mining" },
+  { label: "Content Tokens", href: "/content-tokens" },
+  { label: "Staking", href: "/staking" },
+  { label: "Revenue", href: "/revenue" },
+  { label: "Nodes", href: "/miners" },
   { label: "Transactions", href: "/transactions" },
-  { label: "Tokens", href: "/tokens" },
-  { label: "Inscriptions", href: "/inscriptions" },
 ] as const;

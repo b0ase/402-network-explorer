@@ -2,6 +2,7 @@ const variants = {
   green: "bg-green-500/10 text-green-500 border-green-500/20",
   amber: "bg-amber-500/10 text-amber-500 border-amber-500/20",
   blue: "bg-blue-400/10 text-blue-400 border-blue-400/20",
+  purple: "bg-purple-500/10 text-purple-400 border-purple-500/20",
   zinc: "bg-zinc-800 text-zinc-400 border-zinc-700",
 } as const;
 

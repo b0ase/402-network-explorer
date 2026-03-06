@@ -67,3 +67,33 @@ export async function getAddressBalance(address: string) {
     60
   );
 }
+
+// PATH402 extended
+export async function getCapTable() {
+  return fetchJSON(`${API.path402}/token/cap-table`, 300);
+}
+
+export async function getStakeData() {
+  return fetchJSON(`${API.path402}/stake`, 60);
+}
+
+export async function getX402Stats() {
+  return fetchJSON(`${API.path402}/x402/stats`, 60);
+}
+
+export async function getDividendsPending() {
+  return fetchJSON(`${API.path402}/dividends/pending`, 60);
+}
+
+export async function getContentTokens() {
+  return fetchJSON(`${API.path402}/tokens`, 300);
+}
+
+export async function getContentToken(id: string) {
+  return fetchJSON(`${API.path402}/tokens/${id}`, 60);
+}
+
+// Pool
+export async function getPoolStats() {
+  return fetchJSON(`${API.pool}/network/stats`, 30);
+}
