@@ -31,6 +31,20 @@ export const metadata: Metadata = {
     url: "https://402network.online",
     siteName: "PATH402 Network Explorer",
     type: "website",
+    images: [
+      {
+        url: "https://402network.online/api/og",
+        width: 1200,
+        height: 630,
+        alt: "PATH402 Network Explorer",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PATH402 Network Explorer",
+    description: "Block explorer for the PATH402 network — BSV-21 PoW20 token, 21M supply",
+    images: ["https://402network.online/api/og"],
   },
 };
 
