@@ -43,7 +43,7 @@ export default function TokensPage() {
           TOKEN REGISTRY
         </h1>
         <p className="text-zinc-500 text-sm font-mono">
-          All tokens on the 402 network
+          All tokens on the PATH402 network
         </p>
       </div>
 

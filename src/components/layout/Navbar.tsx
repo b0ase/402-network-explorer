@@ -14,7 +14,7 @@ export function Navbar() {
         <div className="flex items-center justify-between px-4 py-3">
           <Link href="/" className="flex items-center gap-2">
             <span className="font-[family-name:var(--font-display)] font-black text-lg tracking-tight">
-              402
+              PATH402
             </span>
             <span className="text-[9px] uppercase tracking-[0.2em] text-zinc-500 hidden sm:block">
               Network Explorer

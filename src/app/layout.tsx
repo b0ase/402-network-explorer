@@ -21,15 +21,15 @@ const orbitron = Orbitron({
 });
 
 export const metadata: Metadata = {
-  title: "402 Network Explorer",
+  title: "PATH402 Network Explorer",
   description:
-    "Block explorer for the $402 network — BSV-21 PoW20 token, 21M supply, mined via Proof of Indexing",
-  keywords: ["402", "BSV", "Bitcoin SV", "PoW20", "BSV-21", "block explorer", "PATH402"],
+    "Block explorer for the PATH402 network — BSV-21 PoW20 token ($402), 21M supply, mined via Proof of Indexing",
+  keywords: ["PATH402", "$402", "BSV", "Bitcoin SV", "PoW20", "BSV-21", "block explorer", "Proof of Indexing"],
   openGraph: {
-    title: "402 Network Explorer",
-    description: "Block explorer for the $402 network",
+    title: "PATH402 Network Explorer",
+    description: "Block explorer for the PATH402 network",
     url: "https://402network.online",
-    siteName: "402 Network Explorer",
+    siteName: "PATH402 Network Explorer",
     type: "website",
   },
 };
