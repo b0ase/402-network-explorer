@@ -9,11 +9,14 @@ interface MinerAgg {
   total_blocks_mined: number;
   total_hash_rate: number;
   active_miners: number;
+  total_events: number;
 }
 
 interface MinerBrief {
   node_id: string;
-  port: number;
+  name: string;
+  status: string;
+  trading_mode: string;
   mining: {
     is_mining: boolean;
     hash_rate: number;
@@ -37,7 +40,7 @@ export function MinerStatus() {
       }
     }
     load();
-    const interval = setInterval(load, 10_000);
+    const interval = setInterval(load, 30_000);
     return () => clearInterval(interval);
   }, []);
 
@@ -74,33 +77,33 @@ export function MinerStatus() {
       </div>
       <div className="grid grid-cols-3 gap-4">
         <div>
-          <div className="text-[9px] uppercase tracking-[0.15em] text-zinc-600 mb-0.5">Hash Rate</div>
+          <div className="text-[9px] uppercase tracking-[0.15em] text-zinc-600 mb-0.5">Active Now</div>
           <div className="font-[family-name:var(--font-display)] font-black text-sm tracking-tight">
-            {agg.total_hash_rate.toFixed(1)} <span className="text-zinc-500 text-xs">H/s</span>
+            {agg.active_miners} <span className="text-zinc-500 text-xs">/ {agg.total_miners}</span>
           </div>
         </div>
         <div>
-          <div className="text-[9px] uppercase tracking-[0.15em] text-zinc-600 mb-0.5">Blocks Mined</div>
+          <div className="text-[9px] uppercase tracking-[0.15em] text-zinc-600 mb-0.5">Total Events</div>
           <div className="font-[family-name:var(--font-display)] font-black text-sm tracking-tight">
-            {agg.total_blocks_mined}
+            {agg.total_events.toLocaleString()}
           </div>
         </div>
         <div>
-          <div className="text-[9px] uppercase tracking-[0.15em] text-zinc-600 mb-0.5">Active</div>
+          <div className="text-[9px] uppercase tracking-[0.15em] text-zinc-600 mb-0.5">Registered</div>
           <div className="font-[family-name:var(--font-display)] font-black text-sm tracking-tight">
-            {agg.active_miners} / {agg.total_miners}
+            {agg.total_miners}
           </div>
         </div>
       </div>
       {miners.length > 0 && (
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-wrap gap-2">
           {miners.map((m) => (
             <div
-              key={m.node_id + m.port}
+              key={m.node_id}
               className="flex items-center gap-1.5 text-[10px] font-mono text-zinc-500"
             >
-              <div className={`w-1 h-1 ${m.mining?.is_mining ? "bg-green-500" : "bg-amber-500"}`} />
-              {m.node_id.slice(0, 8)}:{m.port}
+              <div className={`w-1 h-1 ${m.mining?.is_mining ? "bg-green-500" : "bg-zinc-600"}`} />
+              {m.name}
             </div>
           ))}
         </div>

@@ -19,7 +19,7 @@ export function NetworkStats() {
         const s = data.stats;
         const gp = data.gorillaPool;
 
-        const supply = s?.supply ?? gp?.amt ?? 0;
+        const supply = s?.totalCirculating ?? s?.supply ?? gp?.amt ?? 0;
         const supplyNum = typeof supply === "string" ? parseFloat(supply) : supply;
         const pctMined = (supplyNum / TOKEN.maxSupply) * 100;
 
@@ -31,12 +31,12 @@ export function NetworkStats() {
           },
           {
             label: "Price (sats)",
-            value: s?.price ? `${s.price}` : "—",
+            value: s?.currentPrice ? `${s.currentPrice}` : s?.price ? `${s.price}` : "—",
             status: "blue",
           },
           {
             label: "Holders",
-            value: gp?.accounts?.toString() ?? s?.holders?.toString() ?? "—",
+            value: s?.totalHolders?.toString() ?? gp?.accounts?.toString() ?? s?.holders?.toString() ?? "—",
             status: "green",
           },
           {
